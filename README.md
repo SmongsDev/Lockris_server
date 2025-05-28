@@ -1,86 +1,87 @@
-## 📖 프로젝트 소개
-`Lockris` Go Echo Server는 테트리스 게임을 위한 고성능 보안 검증 서버입니다. 단일 클라이언트와의 1:1 연결을 통해 완벽한 치팅 방지와 실시간 게임 무결성 검증을 제공합니다.
+## 📖 Project Overview
+`Lockris` Go Echo Server is a high-performance, secure validation server for a Tetris-style game. It offers complete cheat prevention and real-time game integrity verification through a 1:1 connection with a single client.
 
 
-### ✨ 핵심 특징
+### ✨ Key Features
 
-🔒 군사급 보안: 5단계 점수 검증으로 99.9% 치팅 차단
-⚡ 고성능: Go 언어 기반 초경량 서버 (메모리 사용량 8MB 이하)
-🎯 1:1 전용: 단일 클라이언트 집중 관리로 최고 안정성 보장
-🛡️ 실시간 모니터링: 서버 자체 보안 감시 및 자동 대응
-📊 상세 로깅: 모든 게임 이벤트와 보안 사건 완벽 기록
-🖥️ 관리 콘솔: 실시간 서버 제어 및 모니터링
+🔒 Military-grade security: 5-stage score validation blocks 99.9% of cheats  
+⚡ High performance: Ultra-lightweight Go-based server (less than 8MB memory usage)  
+🎯 1:1 dedicated: Maximum stability through single-client focus  
+🛡️ Real-time monitoring: Built-in security surveillance with auto-response  
+📊 Detailed logging: Every game event and security incident fully recorded  
+🖥️ Admin console: Real-time server control and monitoring
 
 
-### 🏗️ 아키텍처
+### 🏗️ Architecture
 ```
-📡 클라이언트 (C++)    ←→    🛡️ Go 서버    ←→    👨‍💼 관리자
-├── 게임 로직                 ├── 연결 관리        ├── 실시간 모니터링
-├── 보안 검사                 ├── 점수 검증        ├── 클라이언트 제어
-└── 네트워크 통신             ├── 보안 모니터링    └── 서버 관리
-                             └── 로깅 시스템
+📡 Client (C++)    ←→    🛡️ Go Server     ←→     👨‍💼 Admin
+├── Game Logic            ├── Connection Mgmt      ├── Real-time Monitoring
+├── Security Checks       ├── Score Validation     ├── Client Control
+└── Network I/O           ├── Security Monitoring  └── Server Management
+                          └── Logging System
 ```
 
 
-## 🚀 빠른 시작
+## 🚀 Getting Started
 
-### 1️⃣ Go 설치
+### 1️⃣ Install Go
 ```bash 
-# Go 공식 사이트에서 다운로드
+# Download from the official Go website
 # https://golang.org/dl/
 
-# 설치 확인
+# Verify installation
 go version
 ```
 
-
-### 2️⃣ 서버 다운로드 및 빌드
+### 2️⃣ Download & Build the Server
 ```bash
-# 프로젝트 클론 (또는 소스 코드 다운로드)
+# Clone the project (or download the source code)
 git clone https://github.com/your-repo/tetris-server.git
 cd tetris-server
 
-# Go 모듈 초기화
+# Initialize Go module
 go mod init tetris-echo-server
 
-# 의존성 자동 해결 및 빌드
+# Resolve dependencies and build
 go build -o tetris_server main.go
 ```
 
-### 3️⃣ 서버 실행
+### 3️⃣ Run the Server
 ```bash
-# 기본 설정으로 서버 시작
+# Start the server with default settings
 ./tetris_server
 
-# 또는 Windows에서
+# On Windows
 tetris_server.exe
 ```
 
-### 4️⃣ 클라이언트 연결
+### 4️⃣ Connect the Client
 ```bash
-# 별도 터미널에서 C++ 클라이언트 실행
+# In a separate terminal, run the C++ client
 ./tetris_game.exe
 ```
 
-## 📡 통신 프로토콜
-### 클라이언트 → 서버
 
-| 명령어 종류    | 형식                                       | 설명                                |예시                                                    |
-|----------------|--------------------------------------------|-------------------------------------|----------------------------------------------------------|
-| 인증           | `AUTH:<토큰>`                              | 클라이언트 인증                     | `AUTH:TETRIS_CLIENT_2025`                                |
-| 점수 전송      | `SCORE:<점수>:<이벤트>:<증가량>:<정보>`     | 강화된 점수 업데이트                | `SCORE:400:LINES_CLEAR:300:2`                             |
-| 보안 이벤트    | `SECURITY:<이벤트>`                         | 보안 관련 이벤트 전송               | `SECURITY:DEBUGGER_DETECTED`                             |
-| 생존 신호      | `HEARTBEAT:`                                | 연결 상태 확인 (추가 데이터 없음)   | `HEARTBEAT:`                                             |
+## 📡 Communication Protocol
 
+### Client → Server
 
-### 서버 → 클라이언트
+| Command Type    | Format                                      | Description                       | Example                          |
+|-----------------|---------------------------------------------|-----------------------------------|----------------------------------|
+| Authentication  | `AUTH:<token>`                              | Authenticate client               | `AUTH:TETRIS_CLIENT_2025`        |
+| Score Update    | `SCORE:<score>:<event>:<gain>:<info>`       | Enhanced score update             | `SCORE:400:LINES_CLEAR:300:2`    |
+| Security Event  | `SECURITY:<event>`                          | Send security-related event       | `SECURITY:DEBUGGER_DETECTED`     |
+| Heartbeat       | `HEARTBEAT:`                                | Connection status check (no data) | `HEARTBEAT:`                     |
 
-| 응답 코드            | 설명                           | 예시                          |
-|----------------------|--------------------------------|-------------------------------------|
-| `AUTH_SUCCESS`        | 클라이언트 인증 성공           |                    |
-| `AUTH_FAILED`         | 클라이언트 인증 실패           |                     |
-| `ACK`                 | 점수 업데이트 승인             |                    |
-| `STATUS_OK`           | 정상 상태 확인 응답            |               |
-| `HEARTBEAT:`          | 하트비트(생존 신호) 응답       |  |
-| `TERMINATE:<이유>`    | 게임 강제 종료 명령            | `TERMINATE:SUSPICIOUS_SCORE`        |
-| `ERROR:<메시지>`      | 오류 발생 응답                 | `ERROR:INVALID_FORMAT`              |
+### Server → Client
+
+| Response Code         | Description                     | Example                         |
+|------------------------|----------------------------------|----------------------------------|
+| `AUTH_SUCCESS`         | Client authentication success   |                                  |
+| `AUTH_FAILED`          | Client authentication failed    |                                  |
+| `ACK`                  | Score update approved           |                                  |
+| `STATUS_OK`            | Status check passed             |                                  |
+| `HEARTBEAT:`           | Heartbeat response              |                                  |
+| `TERMINATE:<reason>`   | Force game termination          | `TERMINATE:SUSPICIOUS_SCORE`     |
+| `ERROR:<message>`      | Error response                  | `ERROR:INVALID_FORMAT`           |
+
